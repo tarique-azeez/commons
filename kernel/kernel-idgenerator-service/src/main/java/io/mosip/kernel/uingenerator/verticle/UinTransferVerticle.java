@@ -36,7 +36,6 @@ public class UinTransferVerticle extends AbstractVerticle {
 	public void schedulerResult(AsyncResult<String> result) {
 		if (result.succeeded()) {
 			LOGGER.debug("scheduler verticle deployment successfull");
-			LOGGER.info("in scheduler Result");
 			cronScheduling(vertx);
 		} else if (result.failed()) {
 			LOGGER.error("scheduler verticle deployment failed with cause ", result.cause());
@@ -50,7 +49,7 @@ public class UinTransferVerticle extends AbstractVerticle {
 	 * @param vertx the vertx
 	 */
 	private void cronScheduling(Vertx vertx) {
-	LOGGER.info("IN CRON-SCHEDULER");
+
 		EventBus eventBus = vertx.eventBus();
 
 		MessageConsumer<JsonObject> consumer = eventBus.consumer(UinSchedulerConstants.NAME_VALUE);
@@ -60,12 +59,14 @@ public class UinTransferVerticle extends AbstractVerticle {
 
 		JsonObject timer = new JsonObject()
 				.put(UinSchedulerConstants.TYPE, environment.getProperty(UinSchedulerConstants.TYPE_VALUE))
-				.put(UinSchedulerConstants.SECONDS, "0")
-				.put(UinSchedulerConstants.MINUTES, "*")
-				.put(UinSchedulerConstants.HOURS, "*")
-				.put(UinSchedulerConstants.DAY_OF_MONTH, "*")
-				.put(UinSchedulerConstants.MONTHS, "*")
-				.put(UinSchedulerConstants.DAYS_OF_WEEK, "*");
+				.put(UinSchedulerConstants.SECONDS, environment.getProperty(UinSchedulerConstants.SECONDS_VALUE))
+				.put(UinSchedulerConstants.MINUTES, environment.getProperty(UinSchedulerConstants.MINUTES_VALUE))
+				.put(UinSchedulerConstants.HOURS, environment.getProperty(UinSchedulerConstants.HOURS_VALUE))
+				.put(UinSchedulerConstants.DAY_OF_MONTH,
+						environment.getProperty(UinSchedulerConstants.DAY_OF_MONTH_VALUE))
+				.put(UinSchedulerConstants.MONTHS, environment.getProperty(UinSchedulerConstants.MONTHS_VALUE))
+				.put(UinSchedulerConstants.DAYS_OF_WEEK,
+						environment.getProperty(UinSchedulerConstants.DAYS_OF_WEEK_VALUE));
 
 		eventBus.send(UinSchedulerConstants.CHIME,
 				new JsonObject().put(UinSchedulerConstants.OPERATION, UinSchedulerConstants.OPERATION_VALUE)
