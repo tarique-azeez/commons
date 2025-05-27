@@ -3,6 +3,8 @@ package io.mosip.kernel.uingenerator.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -55,7 +57,7 @@ public interface UinRepository extends JpaRepository<UinEntity, String> {
 			@Param("uptimes") LocalDateTime uptimes, @Param("uin") String uin);
 	
 	@Query(value = "select uu.uin, uu.cr_by, uu.cr_dtimes, uu.del_dtimes, uu.is_deleted, uu.upd_by, uu.upd_dtimes, uu.uin_status from kernel.uin uu where uu.uin_status= ? LIMIT 100", nativeQuery = true)
-	public List<UinEntity> findByStatus(String status);
+	public Page<UinEntity> findByStatus(String status, Pageable pageable);
 	
 	long countByStatusAndIsDeletedFalse(String status);
 }

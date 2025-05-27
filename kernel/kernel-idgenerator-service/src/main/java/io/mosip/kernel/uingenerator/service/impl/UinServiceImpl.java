@@ -9,6 +9,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +64,9 @@ public class UinServiceImpl implements UinService {
 	
 	@Autowired
 	private VertxAuthenticationProvider authHandler;
+
+	@Value("${uin.fetch.limit}")
+	private int fetchLimit;
 
 	/*
 	 * (non-Javadoc)
@@ -124,8 +131,9 @@ public class UinServiceImpl implements UinService {
 	@Transactional(transactionManager = "transactionManager")
 	@Override
 	public void transferUin() {
-		List<UinEntity> uinEntities=uinRepository.findByStatus(UinGeneratorConstant.ISSUED);
-		LOGGER.info("------COUNT-------"+uinEntities.size());
+		Pageable limitPage = PageRequest.of(0, fetchLimit);
+		Page<UinEntity> uinPage = uinRepository.findByStatus(UinGeneratorConstant.ISSUED, limitPage);
+		List<UinEntity> uinEntities = uinPage.getContent();LOGGER.info("------COUNT-------"+uinEntities.size());
 		System.out.println("------COUNT--------"+uinEntities.size());
 		LOGGER.debug("--------COUNT--------"+uinEntities.size());
 		List<UinEntityAssigned> uinEntitiesAssined = convertUinEntitiesListToUinEntitiesAssignedList(uinEntities);
