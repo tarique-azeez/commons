@@ -124,13 +124,13 @@ public class UinServiceImpl implements UinService {
 	@Transactional(transactionManager = "transactionManager")
 	@Override
 	public void transferUin() {
-		List<UinEntity> uinEntities=uinRepository.findByStatus(UinGeneratorConstant.ASSIGNED);
+		List<UinEntity> uinEntities=uinRepository.findByStatus(UinGeneratorConstant.ISSUED);
 		LOGGER.info("------COUNT-------"+uinEntities.size());
 		System.out.println("------COUNT--------"+uinEntities.size());
 		LOGGER.debug("--------COUNT--------"+uinEntities.size());
 		List<UinEntityAssigned> uinEntitiesAssined = convertUinEntitiesListToUinEntitiesAssignedList(uinEntities);
-		uinRepositoryAssigned.saveAll(uinEntitiesAssined);
-	    uinRepository.deleteAll(uinEntities);
+		//uinRepositoryAssigned.saveAll(uinEntitiesAssined);
+	    //uinRepository.deleteAll(uinEntities);
 	}
 
 	private List<UinEntityAssigned> convertUinEntitiesListToUinEntitiesAssignedList(List<UinEntity> uinEntities) {
