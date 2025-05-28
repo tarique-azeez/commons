@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +49,9 @@ public class UinServiceImpl implements UinService {
 	 */
 	@Autowired
 	private UinRepository uinRepository;
+
+	@Value("${uin.fetch.limit:1000}")
+	private int fetchLimit;
 	
 	@Autowired
 	private UinRepositoryAssigned uinRepositoryAssigned;
@@ -124,10 +128,10 @@ public class UinServiceImpl implements UinService {
 	@Transactional(transactionManager = "transactionManager")
 	@Override
 	public void transferUin() {
-		List<UinEntity> uinEntities=uinRepository.findByStatus(UinGeneratorConstant.ASSIGNED);
+		List<UinEntity> uinEntities=uinRepository.findByStatus(UinGeneratorConstant.ISSUED,fetchLimit);
 		List<UinEntityAssigned> uinEntitiesAssined = convertUinEntitiesListToUinEntitiesAssignedList(uinEntities);
 		uinRepositoryAssigned.saveAll(uinEntitiesAssined);
-	    uinRepository.deleteAll(uinEntities);
+	   // uinRepository.deleteAll(uinEntities);
 	}
 
 	private List<UinEntityAssigned> convertUinEntitiesListToUinEntitiesAssignedList(List<UinEntity> uinEntities) {
