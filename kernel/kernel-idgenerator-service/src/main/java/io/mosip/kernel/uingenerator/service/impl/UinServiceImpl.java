@@ -3,7 +3,6 @@
  */
 package io.mosip.kernel.uingenerator.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -50,8 +49,8 @@ public class UinServiceImpl implements UinService {
 	@Autowired
 	private UinRepository uinRepository;
 
-	@Value("${uin.fetch.limit:1000}")
-	private int fetchLimit;
+	@Value("${mosip.kernel.uin.page.size:50000}")
+	private int pageSize;
 	
 	@Autowired
 	private UinRepositoryAssigned uinRepositoryAssigned;
@@ -128,7 +127,7 @@ public class UinServiceImpl implements UinService {
 	@Transactional(transactionManager = "transactionManager")
 	@Override
 	public void transferUin() {
-		List<UinEntity> uinEntities=uinRepository.findByStatus(UinGeneratorConstant.ISSUED,fetchLimit);
+		List<UinEntity> uinEntities=uinRepository.findByStatus(UinGeneratorConstant.ISSUED, pageSize);
 		LOGGER.info("COUNT--"+uinEntities.size());
 		List<UinEntityAssigned> uinEntitiesAssined = convertUinEntitiesListToUinEntitiesAssignedList(uinEntities);
 		uinRepositoryAssigned.saveAll(uinEntitiesAssined);

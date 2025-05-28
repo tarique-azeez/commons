@@ -59,11 +59,11 @@ public class IDGeneratorVertxApplication {
 
 	private static Vertx vertx;
 
-	@Value("${vid.pool.init.delay.ms:10000}")
-	private static long vidPoolInitDelay;
+	@Value("${mosip.kernel.vid.init-job-frequency:10000}")
+	private static long vidInitJobFrequency;
 
-	@Value("${uin.pool.init.delay.ms:10000}")
-	private static long uinPoolInitDelay;
+	@Value("${mosip.kernel.uin.init-job-frequency:10000}")
+	private static long uinInitJobFrequency;
 
 	private static long applicationStartTime;
 
@@ -188,7 +188,7 @@ public class IDGeneratorVertxApplication {
 		Verticle[] workerVerticles = { new VidPoolCheckerVerticle(context), new VidPopulatorVerticle(context),
 				new VidExpiryVerticle(context), new VidIsolatorVerticle(context) };
 		Stream.of(workerVerticles).forEach(verticle -> deploy(verticle, workerOptions, vertx));
-		vertx.setTimer(vidPoolInitDelay, handler -> initVIDPool());
+		vertx.setTimer(vidInitJobFrequency, handler -> initVIDPool());
 		Verticle[] uinVerticles = { new UinGeneratorVerticle(context),new UinTransferVerticle(context)};
 		Stream.of(uinVerticles).forEach(verticle -> vertx.deployVerticle(verticle, stringAsyncResult -> {
 			if (stringAsyncResult.succeeded()) {
@@ -198,7 +198,7 @@ public class IDGeneratorVertxApplication {
 						+ stringAsyncResult.cause());
 			}
 		}));
-		vertx.setTimer(uinPoolInitDelay, handler -> initUINPool());
+		vertx.setTimer(uinInitJobFrequency, handler -> initUINPool());
 	}
 
 	@PostConstruct
