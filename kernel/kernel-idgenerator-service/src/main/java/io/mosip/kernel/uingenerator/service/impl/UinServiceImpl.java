@@ -129,6 +129,7 @@ public class UinServiceImpl implements UinService {
 	@Override
 	public void transferUin() {
 		List<UinEntity> uinEntities=uinRepository.findByStatus(UinGeneratorConstant.ISSUED,fetchLimit);
+		LOGGER.info("COUNT--"+uinEntities.size());
 		List<UinEntityAssigned> uinEntitiesAssined = convertUinEntitiesListToUinEntitiesAssignedList(uinEntities);
 		uinRepositoryAssigned.saveAll(uinEntitiesAssined);
 	   // uinRepository.deleteAll(uinEntities);
