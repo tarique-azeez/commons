@@ -59,6 +59,12 @@ public class IDGeneratorVertxApplication {
 
 	private static Vertx vertx;
 
+	@Value("${vid.pool.init.delay.ms:10000}")
+	private static long vidPoolInitDelay;
+
+	@Value("${uin.pool.init.delay.ms:10000}")
+	private static long uinPoolInitDelay;
+
 	private static long applicationStartTime;
 
 	/**
@@ -182,7 +188,7 @@ public class IDGeneratorVertxApplication {
 		Verticle[] workerVerticles = { new VidPoolCheckerVerticle(context), new VidPopulatorVerticle(context),
 				new VidExpiryVerticle(context), new VidIsolatorVerticle(context) };
 		Stream.of(workerVerticles).forEach(verticle -> deploy(verticle, workerOptions, vertx));
-		vertx.setTimer(10000L, handler -> initVIDPool());
+		vertx.setTimer(vidPoolInitDelay, handler -> initVIDPool());
 		Verticle[] uinVerticles = { new UinGeneratorVerticle(context),new UinTransferVerticle(context)};
 		Stream.of(uinVerticles).forEach(verticle -> vertx.deployVerticle(verticle, stringAsyncResult -> {
 			if (stringAsyncResult.succeeded()) {
@@ -192,7 +198,7 @@ public class IDGeneratorVertxApplication {
 						+ stringAsyncResult.cause());
 			}
 		}));
-		vertx.setTimer(10000L, handler -> initUINPool());
+		vertx.setTimer(uinPoolInitDelay, handler -> initUINPool());
 	}
 
 	@PostConstruct
