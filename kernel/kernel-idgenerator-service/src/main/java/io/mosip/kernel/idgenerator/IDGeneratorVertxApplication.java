@@ -59,6 +59,8 @@ public class IDGeneratorVertxApplication {
 
 	private static Vertx vertx;
 
+	private static long applicationStartTime;
+
 	/**
 	 * The field for Logger
 	 * 
@@ -95,6 +97,8 @@ public class IDGeneratorVertxApplication {
 	@PostConstruct
 	private static void initVIDPool() {
 		LOGGER.info("Service will be started after pooling vids..");
+		long currentTime = System.currentTimeMillis();
+		LOGGER.info("initVIDPool() called at: " + currentTime + ", elapsed: " + (currentTime - applicationStartTime) + " ms");
 		EventBus eventBus = vertx.eventBus();
 		LOGGER.info("eventBus deployer {}", eventBus);
 		eventBus.publish(EventType.INITPOOL, EventType.INITPOOL);
@@ -163,6 +167,11 @@ public class IDGeneratorVertxApplication {
 	 * @throws InterruptedException
 	 */
 	private static void startApplication() {
+
+
+		applicationStartTime = System.currentTimeMillis();
+		LOGGER.info("Application started at: " + applicationStartTime);
+
 		ApplicationContext context = new AnnotationConfigApplicationContext(HibernateDaoConfig.class);
 		VertxOptions options = new VertxOptions();
 		options.setMetricsOptions(new MicrometerMetricsOptions()
@@ -188,6 +197,8 @@ public class IDGeneratorVertxApplication {
 
 	@PostConstruct
 	private static void initUINPool() {
+		long currentTime = System.currentTimeMillis();
+		LOGGER.info("initUINPool() called at: " + currentTime + ", elapsed: " + (currentTime - applicationStartTime) + " ms");
 		LOGGER.info("Service will be started after pooling vids..");
 		EventBus eventBus = vertx.eventBus();
 		LOGGER.info("eventBus deployer {}", eventBus);
