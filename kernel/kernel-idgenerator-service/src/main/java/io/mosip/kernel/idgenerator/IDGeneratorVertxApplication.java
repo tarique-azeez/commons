@@ -65,11 +65,6 @@ public class IDGeneratorVertxApplication {
 	 */
 	private static Logger LOGGER;
 
-	@Value("${mosip.kernel.vid.init-job-frequency:1000}")
-	private static long vidInitJobFrequency;
-
-	@Value("${mosip.kernel.uin.init-job-frequency:1000}")
-	private static long uinInitJobFrequency;
 
 	/**
 	 * Server context path.
